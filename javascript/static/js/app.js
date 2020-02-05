@@ -5,18 +5,25 @@
 var tableData = data;
 console.log(data)
 
-// Use d3 to choose the tbody in html, and fill table with data
-var tbody = d3.select("tbody");
+function createTable(filteredData){
+    var tbody = d3.select("tbody");
 
-// appends all the data from data.js file into the html page
-data.forEach((sighting) => {
-    //add a new row for each grouping of data
-    var row = tbody.append("tr");
-    Object.entries(sighting).forEach(([key, value]) => {
-      var cell = tbody.append("td");
-      cell.text(value);
+    filteredData.forEach((incident) => {
+        var row = tbody.append("tr");
+        Object.entries(incident).forEach(([key, value]) => {
+            if(key != "comments") {
+                var cell = row.append("td");
+                cell.text(value);
+            } else {
+                var subrow = tbody.append("tr");
+                subrow.append("td");
+                subrow.append("td")
+                    .attr("colspan", 5)
+                    .text(value);
+            };
+        });
     });
-});
+}
 
 
 //------------------------------------------------------------------
@@ -34,30 +41,24 @@ button.on("click", function() {
     var inputElement = d3.select("#datetime");
   
 
-    // Get the value the input
+    // Get the date from input
     var userInput = inputElement.property("value");
  
-    // Prevent refreshing
-    d3.event.preventDefault();
+        
 
 
 
 
-    //use the tabledata filter to create the filtered information
+    //use tabledata.filter to create the filtered data for the previous function to work
     var filteredTable = tableData.filter(sighting => sighting.datetime === userInput);
-    tbody.html("");
-    
     // displayed only the filtered data
-    filteredTable.forEach((sighting) => {
-        console.log(filteredTable);
-        var row = tbody.append("tr");
-        Object.entries(sighting).forEach(([key, value]) => {
-          var cell = tbody.append("td");
-          cell.text(value);
-        });
 
-    });
+    var tbody = d3.select("tbody");
+    tbody.html("");
+    console.log(filteredTable);
+    createTable(filteredTable)
+    
  });
 
 
-
+createTable(data);
